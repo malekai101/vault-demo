@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_football_teams(user: str, passwd: str) -> dict:
+def get_football_teams(user: str, passwd: str) -> list:
     postgres_settings = ["postgres_host", "postgres_port", "postgres_database"]
     if not all(
         [x in settings.get("postgres_settings", {}).keys() for x in postgres_settings]
@@ -28,11 +28,12 @@ def get_football_teams(user: str, passwd: str) -> dict:
                     "select city, team_name, random() as num from tb_football_teams order by num limit 5"
                 )
                 rows = curr.fetchall()
-                ret_dict = {}
+                ret_list = []
                 for row in rows:
-                    ret_dict["city"] = str(row["city"])
-                    ret_dict["team"] = str(row["team_name"])
-                return ret_dict
+                    ret_list.append(
+                        {"city": str(row["city"]), "team": str(row["team_name"])}
+                    )
+                return ret_list
     except Exception as exp:
         logger.exception(f"Meltdown in postgres code: {exp}")
         raise exp
