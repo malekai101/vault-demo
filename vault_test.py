@@ -52,7 +52,7 @@ def main_body():
 tries = 1
 while tries <= 3:
     try:
-        logger.info("Starting try {tries}")
+        logger.info(f"Starting try {tries}")
         main_body()
     except Exception as exp:
         logger.error("Error occurred.  Try one more time.")
