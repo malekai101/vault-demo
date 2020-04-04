@@ -19,34 +19,41 @@ def run_teams(db_user, db_pw):
     print("")
 
 
-# get the vault credentials
-db_user = ""
-db_password = ""
-try:
-    token = get_vault_token()
-    logger.info(f"Token is {token}")
-    db_info = get_login_from_vault(token)
-    db_user = db_info["username"]
-    db_password = db_info["password"]
-    logger.info(f"User name from vault is {db_user}")
-except Exception as exp:
-    logger.exception(f"Blammo: {exp}", exc_info=True)
-    sys.exit(1)
-
-# run the query and display
-run_ctr = 0
-while run_ctr < 15:
+def main_body():
+    db_user = ""
+    db_password = ""
     try:
-        run_teams(db_user=db_user, db_pw=db_password)
-    except OperationalError as op_err:
-        logger.warning(
-            "Failed to connect to Postgres!  Getting a new user and trying again"
-        )
+        token = get_vault_token()
+        logger.info(f"Token is {token}")
         db_info = get_login_from_vault(token)
         db_user = db_info["username"]
         db_password = db_info["password"]
-        logger.info(f"New user name from vault is {db_user}")
-        run_teams(db_user=db_user, db_pw=db_password)
-    run_ctr += 1
-    sleep(10)
-sys.exit(0)
+        logger.info(f"User name from vault is {db_user}")
+    except Exception as exp:
+        logger.exception(f"Authentication error: {exp}", exc_info=True)
+        raise exp
+    # run the query and display
+    while True:
+        try:
+            run_teams(db_user=db_user, db_pw=db_password)
+        except OperationalError as op_err:
+            logger.warning(
+                "Failed to connect to Postgres!  Getting a new user and trying again"
+            )
+            db_info = get_login_from_vault(token)
+            db_user = db_info["username"]
+            db_password = db_info["password"]
+            logger.info(f"New user name from vault is {db_user}")
+            run_teams(db_user=db_user, db_pw=db_password)
+        sleep(10)
+
+
+# get the vault credentials
+tries = 1
+while tries <= 5:
+    try:
+        logger.info(f"Starting try {tries}")
+        main_body()
+    except Exception as exp:
+        logger.error("Error occurred.  Try one more time.")
+        tries += 1
