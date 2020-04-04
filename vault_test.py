@@ -50,7 +50,7 @@ def main_body():
 
 # get the vault credentials
 tries = 1
-while tries <= 3:
+while tries <= 5:
     try:
         logger.info(f"Starting try {tries}")
         main_body()
