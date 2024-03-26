@@ -1,4 +1,5 @@
 {
+  "vault_url": "http://127.0.0.1:8200",
   "postgres_settings": {
     "postgres_host": "127.0.0.1",
     "postgres_port":  "5432",
