@@ -3,9 +3,9 @@
 vault auth enable userpass >/dev/null 2>&1
 vault write auth/userpass/users/vault_demo password="password" policies="pg_ro"
 
-vault policy write secret-reader - <<- EOH > /dev/null 2>&1
-    path "database/roles/football-reader" {
-        capabilities = ["create", "update"]
+vault policy write pg_ro - <<- EOH > /dev/null 2>&1
+    path "database/creds/football-reader" {
+        capabilities = ["read", "list"]
     }
 EOH
 
