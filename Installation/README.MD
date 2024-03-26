@@ -6,7 +6,7 @@ installed through Brew.
 ## Python - Run in project root
 
 * Pull the code from Github into a working directory.
-* Install a python 3.11 virtual environment: `python3.11 -m venv env`
+* Install a python 3.11 virtual environment: `python3.11 -m venv venv`
 * Activate the venv: `source env/bin/activate`
 * Install the packages: `pip install -r requirements.txt`
 
